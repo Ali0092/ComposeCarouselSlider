@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="StacktraceSettings">
+    <option name="folders">
+      <set>
+        <option value="$PROJECT_DIR$/app/build/generated/res/resValues/debug" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java" />
+        <option value="$PROJECT_DIR$/app/src/main/java" />
+        <option value="$PROJECT_DIR$/app/src/main/res" />
+        <option value="$PROJECT_DIR$/app/src/test/java" />
+        <option value="$PROJECT_DIR$/composecarousellib/build/generated/res/resValues/debug" />
+        <option value="$PROJECT_DIR$/composecarousellib/src/androidTest/java" />
+        <option value="$PROJECT_DIR$/composecarousellib/src/main/java" />
+        <option value="$PROJECT_DIR$/composecarousellib/src/main/res" />
+        <option value="$PROJECT_DIR$/composecarousellib/src/test/java" />
+      </set>
+    </option>
+    <option name="packages">
+      <set>
+        <option value="com.example.composecarousel" />
+        <option value="com.example.composecarousellib" />
+      </set>
+    </option>
+  </component>
+</project>

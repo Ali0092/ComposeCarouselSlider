@@ -1,19 +1,30 @@
 package com.example.composecarousellib
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
@@ -29,31 +40,43 @@ fun ComposeCarouselSlider(
     sidePadding: Dp,
     pageSpacing: Dp = 8.dp,
     imageCornerRoundness: Dp = 8.dp,
-    popularMoviesList: List<Int> = emptyList(),
+    imagesList: List<Int> = emptyList(),
+    nonSelectedDotColor: Color = Color.Gray,
+    selectedDotColor: Color = Color.White
 ) {
-    val pagerState = rememberPagerState(pageCount = { popularMoviesList.size })
-    HorizontalPager(
-        modifier = modifier,
-        state = pagerState,
-        contentPadding = PaddingValues(horizontal = sidePadding),
-        verticalAlignment = Alignment.CenterVertically,
-        pageSpacing = pageSpacing
-    ) { page ->
-        Card(modifier = Modifier
-            .clickable {
+    val pagerState = rememberPagerState(pageCount = { imagesList.size })
 
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        HorizontalPager(
+            modifier = modifier,
+            state = pagerState,
+            contentPadding = PaddingValues(horizontal = sidePadding),
+            verticalAlignment = Alignment.CenterVertically,
+            pageSpacing = pageSpacing
+        ) { page ->
+            Card(modifier = Modifier
+                .clickable {
+
+                }
+                .height(height)
+                .fillMaxWidth()
+                .carouselTransition(page, pagerState),
+                shape = RoundedCornerShape(imageCornerRoundness)) {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = rememberAsyncImagePainter(imagesList[page]),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop
+                )
             }
-            .height(height)
-            .fillMaxWidth()
-            .carouselTransition(page, pagerState),
-            shape = RoundedCornerShape(imageCornerRoundness)) {
-            Image(
-                modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(popularMoviesList[page]),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
         }
+
+        DotIndicator(
+            pageCount = imagesList.size,
+            currentPage = pagerState.currentPage,
+            nonSelectedDotColor = nonSelectedDotColor,
+            selectedDotColor = selectedDotColor
+        )
     }
 
 }
@@ -63,8 +86,33 @@ fun Modifier.carouselTransition(page: Int, pagerState: PagerState) = graphicsLay
         ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
 
     val transformation = lerp(
-        start = 0.90f, stop = 1f, fraction = 1f - pageOffset.coerceIn(0f, 1f)
+        start = 0.80f, stop = 1f, fraction = 1f - pageOffset.coerceIn(0f, 1f)
     )
     alpha = transformation
     scaleY = transformation
+}
+
+
+@Composable
+fun DotIndicator(
+    pageCount: Int,
+    currentPage: Int,
+    nonSelectedDotColor: Color = Color.Gray,
+    selectedDotColor: Color = Color.White
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        repeat(pageCount) { index ->
+            Box(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .size(if (index == currentPage) 12.dp else 9.dp)
+                    .clip(CircleShape)
+                    .background(if (index == currentPage) selectedDotColor else nonSelectedDotColor)
+            )
+        }
+    }
 }

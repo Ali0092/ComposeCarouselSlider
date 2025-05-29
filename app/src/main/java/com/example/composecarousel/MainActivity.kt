@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Greeting(modifier: Modifier = Modifier) {
 
-    Column(modifier = modifier.fillMaxSize().background(Color(0xFFD1DAD5)), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier = modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
         ComposeCarouselSlider(
             modifier = Modifier.padding(vertical = 12.dp),
             height = 600.dp,

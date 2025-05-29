@@ -49,9 +49,11 @@ ComposeCarouselSlider(
         R.drawable.image2,
         R.drawable.image3
     ),
+    useDotIndicator = true,
     nonSelectedDotColor = Color.Gray,
-    selectedDotColor = Color.White
-)
+    selectedDotColor = Color.White,
+) { clickedItem-> //index of clickedItem
+}
 ```
 
 ---
@@ -66,6 +68,7 @@ ComposeCarouselSlider(
 | `pageSpacing`          | `Dp`        | Space between each page (default: `8.dp`)       |
 | `imageCornerRoundness` | `Dp`        | Corner radius for image cards (default: `8.dp`) |
 | `imagesList`           | `List<Int>` | List of drawable resource IDs                   |
+| `useDotIndicator`      | `Boolean`   | Boolean for using dotIndicator or not           |
 | `nonSelectedDotColor`  | `Color`     | Color of unselected dot indicators              |
 | `selectedDotColor`     | `Color`     | Color of the selected dot indicator             |
 
@@ -85,7 +88,7 @@ This project is licensed under the [Apache License 2.0](https://github.com/Ali00
 ---
 
 ## 🤝 Contributing
-
+ 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ---

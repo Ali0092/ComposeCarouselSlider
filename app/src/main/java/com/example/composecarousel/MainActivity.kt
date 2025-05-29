@@ -44,7 +44,9 @@ fun Greeting(modifier: Modifier = Modifier) {
             sidePadding = 40.dp,
             pageSpacing = 1.dp,
             imageCornerRoundness = 5.dp,
-            listOf(
+            nonSelectedDotColor = Color.Gray,
+            selectedDotColor = Color.White,
+            imagesList = listOf(
                 R.drawable.image1,
                 R.drawable.image2,
                 R.drawable.image3,

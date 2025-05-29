@@ -1,6 +1,7 @@
 package com.example.composecarousel
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -53,7 +54,9 @@ fun Greeting(modifier: Modifier = Modifier) {
                 R.drawable.image5,
                 R.drawable.image6
             )
-        )
+        ) { index ->
+
+        }
     }
 
 }

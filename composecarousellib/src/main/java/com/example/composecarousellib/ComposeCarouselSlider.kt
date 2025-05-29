@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,8 +40,10 @@ fun ComposeCarouselSlider(
     pageSpacing: Dp = 8.dp,
     imageCornerRoundness: Dp = 8.dp,
     imagesList: List<Int> = emptyList(),
+    useDotIndicator: Boolean = true,
     nonSelectedDotColor: Color = Color.Gray,
-    selectedDotColor: Color = Color.White
+    selectedDotColor: Color = Color.White,
+    getOnClick: (Int) -> Unit =  {}
 ) {
     val pagerState = rememberPagerState(pageCount = { imagesList.size })
 
@@ -56,7 +57,7 @@ fun ComposeCarouselSlider(
         ) { page ->
             Card(modifier = Modifier
                 .clickable {
-
+                    getOnClick(page)
                 }
                 .height(height)
                 .fillMaxWidth()
@@ -71,12 +72,14 @@ fun ComposeCarouselSlider(
             }
         }
 
-        DotIndicator(
-            pageCount = imagesList.size,
-            currentPage = pagerState.currentPage,
-            nonSelectedDotColor = nonSelectedDotColor,
-            selectedDotColor = selectedDotColor
-        )
+       if (useDotIndicator) {
+           DotIndicator(
+               pageCount = imagesList.size,
+               currentPage = pagerState.currentPage,
+               nonSelectedDotColor = nonSelectedDotColor,
+               selectedDotColor = selectedDotColor
+           )
+       }
     }
 
 }

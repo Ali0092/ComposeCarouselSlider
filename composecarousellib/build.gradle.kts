@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
-    id("maven-publish")
 }
 
 android {
@@ -63,30 +62,4 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
 
-}
-
-
-afterEvaluate {
-    publishing {
-        publications {
-            create<MavenPublication>("release") {
-                from(components["release"])
-                groupId = "com.github.Ali0092"
-                artifactId = "composecarousellib"
-                version = "1.0.0"
-            }
-        }
-
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/Ali0092/ComposeCarouselSlider")
-
-                credentials {
-                    username = findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
-                    password = findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
-                }
-            }
-        }
-    }
 }

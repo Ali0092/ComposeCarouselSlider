@@ -29,7 +29,7 @@ Then, add the dependency in your module's `build.gradle`:
 
 ```gradle
 dependencies {
-    implementation 'com.github.Ali0092:ComposeCarouselSlider:v1.0.0'
+    implementation 'com.github.Ali0092:ComposeCarouselSlider:v1.0.1'
 }
 ```
 

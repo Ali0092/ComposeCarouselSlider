@@ -4,6 +4,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+group = "com.github.ali0092"
+version = "1.0.0"
+
 android {
     namespace = "com.example.composecarousellib"
     compileSdk = 35

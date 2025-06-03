@@ -8,12 +8,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +29,7 @@ class MainActivity : ComponentActivity() {
             ComposeCarouselTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Greeting(
-                       modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
@@ -50,7 +48,13 @@ fun Greeting(modifier: Modifier = Modifier) {
         CarouselImage.Resource(R.drawable.image5)
     )
 
-    Column(modifier = modifier.fillMaxSize().background(Color.White), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         ComposeCarouselSlider(
             modifier = Modifier.padding(vertical = 12.dp),
             height = 600.dp,
@@ -63,14 +67,12 @@ fun Greeting(modifier: Modifier = Modifier) {
             enableAutoScroll = true,
             enableAnimationOnAutoScroll = true,
             animationSpecs = spring(
-                dampingRatio = Spring.DampingRatioLowBouncy,
-                stiffness = Spring.StiffnessLow
+                dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
             ),
             imagesList = dataList,
-            getOnClick =  { index ->
+            getOnClick = { index ->
                 //index of clicked image
-            }
-        )
+            })
     }
 
 }

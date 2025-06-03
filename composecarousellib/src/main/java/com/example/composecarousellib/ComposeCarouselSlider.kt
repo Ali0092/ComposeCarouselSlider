@@ -1,8 +1,7 @@
 package com.example.composecarousellib
 
-import android.R.attr.bitmap
+import android.graphics.Bitmap
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +24,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,16 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.graphics.asImageBitmap
-
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import androidx.palette.graphics.Palette
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
-
-
 
 @Composable
 fun ComposeCarouselSlider(
@@ -58,7 +58,7 @@ fun ComposeCarouselSlider(
     enableAutoScroll: Boolean = false,
     enableAnimationOnAutoScroll: Boolean = false,
     animationSpecs: AnimationSpec<Float> = spring(),
-    getOnClick: (Int) -> Unit =  {}
+    getOnClick: (Int) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(pageCount = { imagesList.size })
 
@@ -67,14 +67,22 @@ fun ComposeCarouselSlider(
             while (true) {
                 delay(delay)
                 val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
-                pagerState.animateScrollToPage(nextPage, animationSpec = if (enableAnimationOnAutoScroll) {
-                    animationSpecs
-                }else spring())
+                pagerState.animateScrollToPage(
+                    nextPage, animationSpec = if (enableAnimationOnAutoScroll) {
+                        animationSpecs
+                    } else spring()
+                )
             }
         }
     }
 
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+    var bgColor by remember { mutableStateOf(Color.DarkGray) }
+    var currentIndex by remember { mutableStateOf(0) }
+
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .padding(vertical = 8.dp)
+        .background(bgColor)) {
         HorizontalPager(
             modifier = modifier,
             state = pagerState,
@@ -82,6 +90,7 @@ fun ComposeCarouselSlider(
             verticalAlignment = Alignment.CenterVertically,
             pageSpacing = pageSpacing
         ) { page ->
+            currentIndex = page
             Card(modifier = Modifier
                 .clickable {
                     getOnClick(page)
@@ -95,14 +104,14 @@ fun ComposeCarouselSlider(
             }
         }
 
-       if (useDotIndicator) {
-           DotIndicator(
-               pageCount = imagesList.size,
-               currentPage = pagerState.currentPage,
-               nonSelectedDotColor = nonSelectedDotColor,
-               selectedDotColor = selectedDotColor
-           )
-       }
+        if (useDotIndicator) {
+            DotIndicator(
+                pageCount = imagesList.size,
+                currentPage = pagerState.currentPage,
+                nonSelectedDotColor = nonSelectedDotColor,
+                selectedDotColor = selectedDotColor
+            )
+        }
     }
 
 }
@@ -126,7 +135,8 @@ fun CarouselImageItem(image: CarouselImage) {
 }
 
 fun Modifier.carouselTransition(page: Int, pagerState: PagerState) = graphicsLayer {
-    val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
+    val pageOffset =
+        ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
 
     val transformation = lerp(
         start = 0.80f, stop = 1f, fraction = 1f - pageOffset.coerceIn(0f, 1f)
@@ -135,13 +145,12 @@ fun Modifier.carouselTransition(page: Int, pagerState: PagerState) = graphicsLay
     scaleY = transformation
 }
 
-
 @Composable
 fun DotIndicator(
     pageCount: Int,
     currentPage: Int,
     nonSelectedDotColor: Color = Color.Gray,
-    selectedDotColor: Color = Color.White
+    selectedDotColor: Color = Color.White,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),

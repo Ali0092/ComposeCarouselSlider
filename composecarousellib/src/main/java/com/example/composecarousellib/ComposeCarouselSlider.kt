@@ -1,5 +1,6 @@
 package com.example.composecarousellib
 
+import android.R.attr.bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,12 +26,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.asImageBitmap
+
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import coil.compose.rememberAsyncImagePainter
 import kotlin.math.absoluteValue
+
+
 
 @Composable
 fun ComposeCarouselSlider(
@@ -63,12 +69,8 @@ fun ComposeCarouselSlider(
                 .fillMaxWidth()
                 .carouselTransition(page, pagerState),
                 shape = RoundedCornerShape(imageCornerRoundness)) {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = rememberAsyncImagePainter(imagesList[page]),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop
-                )
+
+                CarouselImageItem(imagesList[page])
             }
         }
 
@@ -82,6 +84,24 @@ fun ComposeCarouselSlider(
        }
     }
 
+}
+
+@Composable
+fun CarouselImageItem(image: CarouselImage) {
+
+    val painter = when (image) {
+        is CarouselImage.Resource -> rememberAsyncImagePainter(image.resId)
+        is CarouselImage.Url -> rememberAsyncImagePainter(image.url)
+        is CarouselImage.AsImageBitmap -> BitmapPainter(image = image.imageBitmap)
+        is CarouselImage.Custom -> image.painter
+    }
+
+    Image(
+        modifier = Modifier.fillMaxSize(),
+        painter = painter,
+        contentDescription = null,
+        contentScale = ContentScale.Crop
+    )
 }
 
 fun Modifier.carouselTransition(page: Int, pagerState: PagerState) = graphicsLayer {

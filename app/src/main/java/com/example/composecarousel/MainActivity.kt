@@ -47,7 +47,13 @@ fun Greeting(modifier: Modifier = Modifier) {
             imageCornerRoundness = 5.dp,
             nonSelectedDotColor = Color.Gray,
             selectedDotColor = Color.DarkGray,
-            imagesList = listOf()
+            imagesList = listOf(
+                CarouselImage.Resource(R.drawable.image1),
+                CarouselImage.Resource(R.drawable.image2),
+                CarouselImage.Resource(R.drawable.image3),
+                CarouselImage.Resource(R.drawable.image4),
+                CarouselImage.Resource(R.drawable.image5)
+            )
         ) { index ->
 
         }

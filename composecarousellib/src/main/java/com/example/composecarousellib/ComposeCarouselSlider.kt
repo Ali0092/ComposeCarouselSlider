@@ -39,7 +39,7 @@ fun ComposeCarouselSlider(
     sidePadding: Dp,
     pageSpacing: Dp = 8.dp,
     imageCornerRoundness: Dp = 8.dp,
-    imagesList: List<Int> = emptyList(),
+    imagesList: List<CarouselImage> = emptyList(),
     useDotIndicator: Boolean = true,
     nonSelectedDotColor: Color = Color.Gray,
     selectedDotColor: Color = Color.White,
@@ -91,7 +91,7 @@ fun Modifier.carouselTransition(page: Int, pagerState: PagerState) = graphicsLay
     val transformation = lerp(
         start = 0.80f, stop = 1f, fraction = 1f - pageOffset.coerceIn(0f, 1f)
     )
-    alpha = transformation
+//    alpha = transformation
     scaleY = transformation
 }
 

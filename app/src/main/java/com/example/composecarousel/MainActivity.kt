@@ -51,7 +51,8 @@ fun Greeting(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.White),
+//            .background(Color(0xFF3F3F3F))
+        ,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -62,10 +63,10 @@ fun Greeting(modifier: Modifier = Modifier) {
             pageSpacing = 1.dp,
             imageCornerRoundness = 25.dp,
             nonSelectedDotColor = Color.Gray,
-            selectedDotColor = Color.DarkGray,
+            selectedDotColor = Color.White,
             delay = 2000,
-            enableAutoScroll = true,
-            enableAnimationOnAutoScroll = true,
+            enableAutoScroll = false,
+            enableAnimationOnAutoScroll = false,
             animationSpecs = spring(
                 dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
             ),

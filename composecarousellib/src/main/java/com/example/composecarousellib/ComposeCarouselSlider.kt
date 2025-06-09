@@ -1,6 +1,5 @@
 package com.example.composecarousellib
 
-import android.graphics.Bitmap
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Image
@@ -30,15 +29,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
-import androidx.palette.graphics.Palette
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlin.math.absoluteValue
@@ -76,48 +76,54 @@ fun ComposeCarouselSlider(
         }
     }
 
-    var bgColor by remember { mutableStateOf(Color.DarkGray) }
+
+
     var currentIndex by remember { mutableStateOf(0) }
 
-    Column(modifier = Modifier
+    Box(modifier = Modifier
         .fillMaxWidth()
-        .padding(vertical = 8.dp)
-        .background(bgColor)) {
-        HorizontalPager(
-            modifier = modifier,
-            state = pagerState,
-            contentPadding = PaddingValues(horizontal = sidePadding),
-            verticalAlignment = Alignment.CenterVertically,
-            pageSpacing = pageSpacing
-        ) { page ->
-            currentIndex = page
-            Card(modifier = Modifier
-                .clickable {
-                    getOnClick(page)
+        .padding(vertical = 8.dp)) {
+
+        CarouselImageItem(imagesList[currentIndex], canAddBlur = true)
+
+        Column(modifier = Modifier.align(Alignment.Center)) {
+
+            HorizontalPager(
+                modifier = modifier,
+                state = pagerState,
+                contentPadding = PaddingValues(horizontal = sidePadding),
+                verticalAlignment = Alignment.CenterVertically,
+                pageSpacing = pageSpacing
+            ) { page ->
+                currentIndex = page
+                Card(modifier = Modifier
+                    .clickable {
+                        getOnClick(page)
+                    }
+                    .height(height)
+                    .fillMaxWidth()
+                    .carouselTransition(page, pagerState),
+                    shape = RoundedCornerShape(imageCornerRoundness)) {
+
+                    CarouselImageItem(imagesList[page])
                 }
-                .height(height)
-                .fillMaxWidth()
-                .carouselTransition(page, pagerState),
-                shape = RoundedCornerShape(imageCornerRoundness)) {
-
-                CarouselImageItem(imagesList[page])
             }
-        }
 
-        if (useDotIndicator) {
-            DotIndicator(
-                pageCount = imagesList.size,
-                currentPage = pagerState.currentPage,
-                nonSelectedDotColor = nonSelectedDotColor,
-                selectedDotColor = selectedDotColor
-            )
+            if (useDotIndicator) {
+                DotIndicator(
+                    pageCount = imagesList.size,
+                    currentPage = pagerState.currentPage,
+                    nonSelectedDotColor = nonSelectedDotColor,
+                    selectedDotColor = selectedDotColor
+                )
+            }
         }
     }
 
 }
 
 @Composable
-fun CarouselImageItem(image: CarouselImage) {
+fun CarouselImageItem(image: CarouselImage, canAddBlur: Boolean = false) {
 
     val painter = when (image) {
         is CarouselImage.Resource -> rememberAsyncImagePainter(image.resId)
@@ -127,7 +133,7 @@ fun CarouselImageItem(image: CarouselImage) {
     }
 
     Image(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().blur(if (canAddBlur)20.dp else 0.dp),
         painter = painter,
         contentDescription = null,
         contentScale = ContentScale.Crop

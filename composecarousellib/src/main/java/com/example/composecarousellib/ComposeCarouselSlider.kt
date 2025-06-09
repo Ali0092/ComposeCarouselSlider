@@ -23,19 +23,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
@@ -54,8 +48,8 @@ fun ComposeCarouselSlider(
     useDotIndicator: Boolean = true,
     nonSelectedDotColor: Color = Color.Gray,
     selectedDotColor: Color = Color.White,
-    delay: Long = 3_000L,
     enableAutoScroll: Boolean = false,
+    autoScrollDelay: Long = 3_000L,
     enableAnimationOnAutoScroll: Boolean = false,
     animationSpecs: AnimationSpec<Float> = spring(),
     getOnClick: (Int) -> Unit = {},
@@ -65,7 +59,7 @@ fun ComposeCarouselSlider(
     if (enableAutoScroll) {
         LaunchedEffect(pagerState) {
             while (true) {
-                delay(delay)
+                delay(autoScrollDelay)
                 val nextPage = (pagerState.currentPage + 1) % pagerState.pageCount
                 pagerState.animateScrollToPage(
                     nextPage, animationSpec = if (enableAnimationOnAutoScroll) {
@@ -76,54 +70,46 @@ fun ComposeCarouselSlider(
         }
     }
 
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+    ) {
 
-
-    var currentIndex by remember { mutableStateOf(0) }
-
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 8.dp)) {
-
-        CarouselImageItem(imagesList[currentIndex], canAddBlur = true)
-
-        Column(modifier = Modifier.align(Alignment.Center)) {
-
-            HorizontalPager(
-                modifier = modifier,
-                state = pagerState,
-                contentPadding = PaddingValues(horizontal = sidePadding),
-                verticalAlignment = Alignment.CenterVertically,
-                pageSpacing = pageSpacing
-            ) { page ->
-                currentIndex = page
-                Card(modifier = Modifier
-                    .clickable {
-                        getOnClick(page)
-                    }
-                    .height(height)
-                    .fillMaxWidth()
-                    .carouselTransition(page, pagerState),
-                    shape = RoundedCornerShape(imageCornerRoundness)) {
-
-                    CarouselImageItem(imagesList[page])
+        HorizontalPager(
+            modifier = modifier,
+            state = pagerState,
+            contentPadding = PaddingValues(horizontal = sidePadding),
+            verticalAlignment = Alignment.CenterVertically,
+            pageSpacing = pageSpacing
+        ) { page ->
+            Card(modifier = Modifier
+                .clickable {
+                    getOnClick(page)
                 }
-            }
+                .height(height)
+                .fillMaxWidth()
+                .carouselTransition(page, pagerState),
+                shape = RoundedCornerShape(imageCornerRoundness)) {
 
-            if (useDotIndicator) {
-                DotIndicator(
-                    pageCount = imagesList.size,
-                    currentPage = pagerState.currentPage,
-                    nonSelectedDotColor = nonSelectedDotColor,
-                    selectedDotColor = selectedDotColor
-                )
+                CarouselImageItem(imagesList[page])
             }
+        }
+
+        if (useDotIndicator) {
+            DotIndicator(
+                pageCount = imagesList.size,
+                currentPage = pagerState.currentPage,
+                nonSelectedDotColor = nonSelectedDotColor,
+                selectedDotColor = selectedDotColor
+            )
         }
     }
 
 }
 
 @Composable
-fun CarouselImageItem(image: CarouselImage, canAddBlur: Boolean = false) {
+fun CarouselImageItem(image: CarouselImage) {
 
     val painter = when (image) {
         is CarouselImage.Resource -> rememberAsyncImagePainter(image.resId)
@@ -133,7 +119,7 @@ fun CarouselImageItem(image: CarouselImage, canAddBlur: Boolean = false) {
     }
 
     Image(
-        modifier = Modifier.fillMaxSize().blur(if (canAddBlur)20.dp else 0.dp),
+        modifier = Modifier.fillMaxSize(),
         painter = painter,
         contentDescription = null,
         contentScale = ContentScale.Crop

@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,17 +40,17 @@ class MainActivity : ComponentActivity() {
 fun Greeting(modifier: Modifier = Modifier) {
 
     val dataList = listOf(
+        CarouselImage.Resource(R.drawable.image3),
         CarouselImage.Resource(R.drawable.image1),
         CarouselImage.Resource(R.drawable.image2),
-        CarouselImage.Resource(R.drawable.image3),
         CarouselImage.Resource(R.drawable.image4),
-        CarouselImage.Resource(R.drawable.image5)
+        CarouselImage.Resource(R.drawable.image5),
+        CarouselImage.Resource(R.drawable.image6),
     )
 
     Column(
         modifier = modifier
             .fillMaxSize()
-//            .background(Color(0xFF3F3F3F))
         ,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -60,15 +59,15 @@ fun Greeting(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(vertical = 12.dp),
             height = 600.dp,
             sidePadding = 40.dp,
-            pageSpacing = 1.dp,
-            imageCornerRoundness = 25.dp,
+            pageSpacing = 4.dp,
+            imageCornerRoundness = 5.dp,
             nonSelectedDotColor = Color.Gray,
             selectedDotColor = Color.White,
-            delay = 2000,
-            enableAutoScroll = false,
-            enableAnimationOnAutoScroll = false,
+            enableAutoScroll = true,
+            autoScrollDelay = 2000,
+            enableAnimationOnAutoScroll = true,
             animationSpecs = spring(
-                dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow
+                dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow
             ),
             imagesList = dataList,
             getOnClick = { index ->

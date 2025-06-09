@@ -85,8 +85,7 @@ ComposeCarouselSlider(
 ---
 
 ## 📸 Preview
-
-![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/f4b902e3-abe7-456b-b21f-2f9b52a21f4d)
+<img src="https://github.com/user-attachments/assets/b5ed01c1-e3ed-429a-ae96-578423ec697a" width="40%">
 
 ---
 

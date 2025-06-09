@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.ali0092"
-version = "1.0.0"
+version = "1.0.2"
 
 android {
     namespace = "com.example.composecarousellib"
@@ -65,7 +65,4 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
 
-    // Palette
-    implementation("androidx.palette:palette:1.0.0")
-    
 }

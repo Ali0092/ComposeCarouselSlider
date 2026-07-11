@@ -1,109 +1,112 @@
 # ComposeCarouselLib
 [![](https://jitpack.io/v/Ali0092/ComposeCarouselSlider.svg)](https://jitpack.io/#Ali0092/ComposeCarouselSlider)
 
-A lightweight and customizable image carousel slider built with **Jetpack Compose**, designed for Android apps. This library provides smooth animations, scaling transitions, and dot indicators to showcase images in a modern and beautiful way.
+A Jetpack Compose carousel with pluggable page effects — Tinder deck swipe, water ripple, cover flow, page curl, and ~20 more. Swap effects at runtime, or write your own.
 
----
+## Requirements
 
-## ✨ Features
+`minSdk = 33` (shader effects use AGSL `RuntimeShader`).
 
-* Smooth **scaling transition** between carousel pages
-* Support multiple data types **URL, ResId, ImageBitmap and Painter**
-* AutoScroll **customizable with Animtion** 
-* Fully **customizable** dot indicators
-* Clean and minimal design
+## Install
 
----
-
-## 📦 Installation
-
-Add JitPack to your root `build.gradle`:
+Add JitPack to your root `settings.gradle`:
 
 ```gradle
-allprojects {
+dependencyResolutionManagement {
     repositories {
-        maven { url 'https://jitpack.io' }
+        maven { url = uri("https://jitpack.io") }
     }
 }
 ```
 
-Then, add the dependency in your module's `build.gradle`:
+Then depend on the library:
 
 ```gradle
 dependencies {
-    implementation 'com.github.Ali0092:ComposeCarouselSlider:v1.0.2'
+    implementation("com.github.Ali0092:ComposeCarouselSlider:2.0.0")
 }
 ```
 
----
-
-## 🛠️ Usage
+## Usage
 
 ```kotlin
-ComposeCarouselSlider(
-    modifier = Modifier.padding(vertical = 12.dp),
-    height = 600.dp,
-    sidePadding = 40.dp,
-    pageSpacing = 0.dp,
-    imageCornerRoundness = 1.dp,
-    nonSelectedDotColor = Color.Gray,
-    selectedDotColor = Color.DarkGray,
-    enableAutoScroll = true,
-    autoScrollDelay = 1200,
-    enableAnimationOnAutoScroll = true,
-    animationSpecs = spring(
-        dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow
-    ),
-    imagesList = dataList,
-    getOnClick = { index ->
-        //index of clicked image
-    }
+val images = listOf(
+    CarouselImage.Resource(R.drawable.image1),
+    CarouselImage.Url("https://example.com/image2.jpg"),
+)
+
+CarouselSlider(
+    items = images,
+    effect = TinderEffect(),
+    onItemClick = { index -> /* ... */ },
 )
 ```
 
----
+That's the whole API. Change `effect = ...` to switch styles; everything else has a sensible default.
 
-## ⚙️ Parameters
+## Effects
 
-| Name                          | Type                   | Description                                                         |
-| ----------------------------- | ---------------------- | ------------------------------------------------------------------- |
-| `modifier`                    | `Modifier`             | Layout modifier for the carousel                                    |
-| `height`                      | `Dp`                   | Height of each carousel image card                                  |
-| `sidePadding`                 | `Dp`                   | Padding around the horizontal pager                                 |
-| `pageSpacing`                 | `Dp`                   | Space between each page (default: `8.dp`)                           |
-| `imageCornerRoundness`        | `Dp`                   | Corner radius for image cards (default: `8.dp`)                     |
-| `imagesList`                  | `List<CarouselImage>`  | List of images to display in the carousel                           |
-| `useDotIndicator`             | `Boolean`              | Whether to show dot indicators (default: `true`)                    |
-| `nonSelectedDotColor`         | `Color`                | Color of unselected dot indicators                                  |
-| `selectedDotColor`            | `Color`                | Color of the selected dot indicator                                 |
-| `enableAutoScroll`            | `Boolean`              | Automatically scroll to the next image (default: `false`)           |
-| `autoScrollDelay`             | `Long`                 | Delay time in milliseconds for auto scroll (default: `3_000L`)      |
-| `enableAnimationOnAutoScroll` | `Boolean`              | Whether to animate the transition on auto scroll (default: `false`) |
-| `animationSpecs`              | `AnimationSpec<Float>` | Animation spec used when auto-scrolling (default: `spring()`)       |
-| `getOnClick`                  | `(Int) -> Unit`        | Callback when an image is clicked; provides index of clicked item   |
+Pass any of these classes to the `effect` parameter — e.g. `effect = WaterRippleEffect()`.
 
----
+**Shader-based (fancy)**
+- `WaterRippleEffect()`
+- `PageCurlEffect()`
+- `MorphEffect()`
+- `GlitchEffect()`
+- `ChromaticAberrationEffect()`
+- `NoiseDissolveEffect()`
+- `PixelateEffect()`
+- `MotionBlurEffect()`
 
-## 📸 Preview
-<img src="https://github.com/user-attachments/assets/b5ed01c1-e3ed-429a-ae96-578423ec697a" width="40%">
+**3D / card-deck**
+- `TinderEffect()`
+- `CoverFlowEffect()`
+- `Cube3DEffect()`
+- `StackEffect()`
+- `Flip3DEffect()`
+- `BookFoldEffect()`
+- `FanEffect()`
 
----
+**Everyday**
+- `AccordionEffect()`
+- `ElasticEffect()`
+- `RotateEffect()`
+- `ParallaxEffect()`
+- `DepthEffect()`
+- `ZoomOutEffect()`
+- `FadeEffect()`
+- `ScaleEffect()`
+- `NoEffect` (default — pages just slide)
 
-## 📄 License
+Or grab them all at once: `CarouselEffects.all` (curated order), `CarouselEffects.fancy`, `CarouselEffects.geometry3d`, `CarouselEffects.common`.
 
-This project is licensed under the [Apache License 2.0](https://github.com/Ali0092/ComposeCarouselSlider/blob/main/LICENSE).
+Roll your own by implementing `CarouselEffect` and overriding `buildItemModifier` (or `rememberItemModifier` if you need state).
 
----
+## Parameters
 
-## 🤝 Contributing
- 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+| Name | Default | What it does |
+| --- | --- | --- |
+| `items` | required | `List<CarouselImage>` (Resource, Url, ImageBitmap, or Painter) |
+| `showBackgroundImage` | `true` | Blurred full-bleed backdrop of the current image |
+| `backgroundBlurRadius` | `40.dp` | Blur strength for the backdrop |
+| `pageHeight` | `null` | Fixed card height; `null` fills parent |
+| `contentPadding` | `32.dp` horizontal | Padding around the pager |
+| `pageSpacing` | `8.dp` | Space between pages |
+| `itemCornerRadius` | `20.dp` | Corner radius on the image card |
+| `effect` | `NoEffect` | The page transform |
+| `autoScroll` | `false` | Auto-advance through pages |
+| `autoScrollDelayMs` | `3000` | Delay between auto-scrolls |
+| `autoScrollAnimationSpec` | `spring()` | Auto-scroll animation |
+| `pagerState` | remembered | Provide one to control the pager externally |
+| `onItemClick` | `null` | Called with the tapped page index |
 
----
+## Preview
+<img src="https://github.com/user-attachments/assets/b5ed01c1-e3ed-429a-ae96-578423ec697a" alt="Carousel preview" width="40%">
 
-## 👤 Author
+## License
 
-**Muhammad Ali**
-📧 [aliatwork364@gmail.com](mailto:aliatwork364@gmail.com)
-🔗 [LinkedIn](https://www.linkedin.com/in/muhammad-ali-a28422222/)
-🐙 [GitHub](https://github.com/Ali0092/)
+Apache 2.0 — see [LICENSE](LICENSE).
+
+## Author
+
+**Muhammad Ali** — [GitHub](https://github.com/Ali0092/) · [LinkedIn](https://www.linkedin.com/in/muhammad-ali-a28422222/)

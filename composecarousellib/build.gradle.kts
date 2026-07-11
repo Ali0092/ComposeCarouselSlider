@@ -5,14 +5,14 @@ plugins {
 }
 
 group = "com.github.ali0092"
-version = "1.0.2"
+version = "2.0.1"
 
 android {
     namespace = "com.example.composecarousellib"
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 24
+        minSdk = 33
         targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

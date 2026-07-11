@@ -2,14 +2,12 @@ package com.example.composecarousellib.effects
 
 import com.example.composecarousellib.effects.shader.ChromaticAberrationEffect
 import com.example.composecarousellib.effects.shader.GlitchEffect
-import com.example.composecarousellib.effects.shader.LiquidGlassEffect
 import com.example.composecarousellib.effects.shader.MorphEffect
 import com.example.composecarousellib.effects.shader.MotionBlurEffect
 import com.example.composecarousellib.effects.shader.NoiseDissolveEffect
 import com.example.composecarousellib.effects.shader.PageCurlEffect
 import com.example.composecarousellib.effects.shader.PixelateEffect
 import com.example.composecarousellib.effects.shader.WaterRippleEffect
-import com.example.composecarousellib.effects.shader.WaveDistortionEffect
 
 /**
  * Convenient registry of every effect the library ships. Ordering is intentional:
@@ -20,12 +18,10 @@ object CarouselEffects {
 
     /** Shader-driven premium effects — the ones users notice at first glance. */
     val fancy: List<CarouselEffect> = listOf(
-        LiquidGlassEffect(),
         WaterRippleEffect(),
         PageCurlEffect(),
         MorphEffect(),
         GlitchEffect(),
-        WaveDistortionEffect(),
         ChromaticAberrationEffect(),
         NoiseDissolveEffect(),
         PixelateEffect(),
@@ -36,7 +32,6 @@ object CarouselEffects {
     val geometry3d: List<CarouselEffect> = listOf(
         CoverFlowEffect(),
         Cube3DEffect(),
-        TinderEffect(),
         StackEffect(),
         Flip3DEffect(),
         BookFoldEffect(),
@@ -56,6 +51,16 @@ object CarouselEffects {
         NoEffect,
     )
 
-    /** All effects: fancy → 3D → common → none. */
-    val all: List<CarouselEffect> = fancy + geometry3d + common
+    /**
+     * All effects. Ordering surfaces the most impressive-feeling effects first —
+     * WaterRipple leads, Tinder rides in the #2 slot as a hero deck-swipe, and the
+     * rest of the fancy shader stack follows before the calmer 3D and common effects.
+     */
+    val all: List<CarouselEffect> = buildList {
+        add(WaterRippleEffect())
+        add(TinderEffect())
+        addAll(fancy.drop(1))
+        addAll(geometry3d)
+        addAll(common)
+    }
 }

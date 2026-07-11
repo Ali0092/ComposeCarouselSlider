@@ -21,8 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
@@ -33,6 +35,7 @@ import com.example.composecarousellib.effects.NoEffect
 import com.example.composecarousellib.indicators.CarouselIndicator
 import com.example.composecarousellib.indicators.ExpandingPillIndicator
 import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 /**
  * Generic image carousel driven by a swappable [CarouselEffect] and [CarouselIndicator].
@@ -43,13 +46,15 @@ import kotlinx.coroutines.delay
  * pager state is preserved.
  *
  * When [pageHeight] is null the pager fills its parent's height, which is what
- * backdrop-driven effects (LiquidGlass, WaterRipple) need. Pass a concrete Dp to
- * pin the pager to a card-style height instead.
+ * backdrop-driven effects (e.g. WaterRipple) need. Pass a concrete Dp to pin the
+ * pager to a card-style height instead.
  */
 @Composable
 fun CarouselSlider(
     items: List<CarouselImage>,
     modifier: Modifier = Modifier,
+    showBackgroundImage: Boolean = true,
+    backgroundBlurRadius: Dp = 40.dp,
     pageHeight: Dp? = null,
     contentPadding: PaddingValues = PaddingValues(horizontal = 32.dp),
     pageSpacing: Dp = 8.dp,
@@ -62,33 +67,43 @@ fun CarouselSlider(
     pagerState: PagerState = rememberPagerState { items.size },
     onItemClick: ((Int) -> Unit)? = null,
 ) {
-    CarouselSliderContent(
-        pageCount = items.size,
-        modifier = modifier,
-        pageHeight = pageHeight,
-        contentPadding = contentPadding,
-        pageSpacing = pageSpacing,
-        effect = effect,
-        indicator = indicator,
-        autoScroll = autoScroll,
-        autoScrollDelayMs = autoScrollDelayMs,
-        autoScrollAnimationSpec = autoScrollAnimationSpec,
-        pagerState = pagerState,
-        renderImage = { index, imageModifier ->
-            CarouselImagePainter(
-                image = items[index],
-                cornerRadius = itemCornerRadius,
-                modifier = imageModifier,
+    Box(modifier = modifier) {
+        if (showBackgroundImage && items.isNotEmpty()) {
+            CarouselBackgroundLayer(
+                items = items,
+                pagerState = pagerState,
+                blurRadius = backgroundBlurRadius,
+                modifier = Modifier.matchParentSize(),
             )
-        },
-        page = { pageIndex ->
-            CarouselImageContent(
-                image = items[pageIndex],
-                cornerRadius = itemCornerRadius,
-                onClick = if (onItemClick != null) ({ onItemClick(pageIndex) }) else null,
-            )
-        },
-    )
+        }
+        CarouselSliderContent(
+            pageCount = items.size,
+            modifier = Modifier,
+            pageHeight = pageHeight,
+            contentPadding = contentPadding,
+            pageSpacing = pageSpacing,
+            effect = effect,
+            indicator = indicator,
+            autoScroll = autoScroll,
+            autoScrollDelayMs = autoScrollDelayMs,
+            autoScrollAnimationSpec = autoScrollAnimationSpec,
+            pagerState = pagerState,
+            renderImage = { index, imageModifier ->
+                CarouselImagePainter(
+                    image = items[index],
+                    cornerRadius = itemCornerRadius,
+                    modifier = imageModifier,
+                )
+            },
+            page = { pageIndex ->
+                CarouselImageContent(
+                    image = items[pageIndex],
+                    cornerRadius = itemCornerRadius,
+                    onClick = if (onItemClick != null) ({ onItemClick(pageIndex) }) else null,
+                )
+            },
+        )
+    }
 }
 
 /**
@@ -213,6 +228,67 @@ private fun CarouselImagePainter(
     }
     Image(
         modifier = modifier.clip(RoundedCornerShape(cornerRadius)),
+        painter = painter,
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+    )
+}
+
+@Composable
+private fun CarouselBackgroundLayer(
+    items: List<CarouselImage>,
+    pagerState: PagerState,
+    blurRadius: Dp,
+    modifier: Modifier = Modifier,
+) {
+    val settledIndex = pagerState.settledPage.coerceIn(0, items.lastIndex)
+    val nextIndex = (settledIndex + 1).coerceAtMost(items.lastIndex)
+    val prevIndex = (settledIndex - 1).coerceAtLeast(0)
+    // Blur the whole backdrop so the carousel card in front visually pops; the fade
+    // between pages happens inside the blurred layer so the transition looks natural.
+    Box(modifier = modifier.blur(blurRadius)) {
+        CarouselBackgroundImage(
+            image = items[settledIndex],
+            modifier = Modifier.matchParentSize(),
+        )
+        if (nextIndex != settledIndex) {
+            CarouselBackgroundImage(
+                image = items[nextIndex],
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer {
+                        val f = pagerState.currentPageOffsetFraction
+                        alpha = if (f > 0f) f.coerceIn(0f, 1f) else 0f
+                    },
+            )
+        }
+        if (prevIndex != settledIndex) {
+            CarouselBackgroundImage(
+                image = items[prevIndex],
+                modifier = Modifier
+                    .matchParentSize()
+                    .graphicsLayer {
+                        val f = pagerState.currentPageOffsetFraction
+                        alpha = if (f < 0f) abs(f).coerceIn(0f, 1f) else 0f
+                    },
+            )
+        }
+    }
+}
+
+@Composable
+private fun CarouselBackgroundImage(
+    image: CarouselImage,
+    modifier: Modifier = Modifier,
+) {
+    val painter = when (image) {
+        is CarouselImage.Resource -> rememberAsyncImagePainter(image.resId)
+        is CarouselImage.Url -> rememberAsyncImagePainter(image.url)
+        is CarouselImage.AsImageBitmap -> BitmapPainter(image.imageBitmap)
+        is CarouselImage.Custom -> image.painter
+    }
+    Image(
+        modifier = modifier,
         painter = painter,
         contentDescription = null,
         contentScale = ContentScale.Crop,

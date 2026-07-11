@@ -21,15 +21,19 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.example.composecarousellib.effects.CarouselEffect
+import com.example.composecarousellib.internal.signedPageOffset
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 import org.intellij.lang.annotations.Language
 
 /**
- * Water-surface ripple applied directly to each page image (no backdrop). Ripples
- * emit wherever the finger touches or drags across the card — like a fingertip
- * running across a still pool — and pulse from center on page change.
+ * Water-surface ripple applied to each page image. Pages cross-fade in place instead
+ * of sliding horizontally, so switching pages reads as water washing over the image
+ * rather than a hard slide. The pager's own translation is cancelled per-page and
+ * alpha ramps down with `|signedPageOffset|`, leaving the touch-driven ripple trail
+ * as the dominant visual signal that "the swipe is happening on the water surface."
  *
  * Up to [maxRipples] concurrent ripples are composited in a single AGSL pass; each
  * ripple contributes a damped sinusoidal wave near its expanding front.
@@ -100,6 +104,12 @@ class WaterRippleEffect(
                 }
             }
             .graphicsLayer {
+                val offset = pagerState.signedPageOffset(page)
+                val absOffset = abs(offset).coerceAtMost(1f)
+                // Cancel pager's horizontal slide so neighbouring pages stack on top
+                // of each other at center, then cross-fade between them.
+                translationX = -offset * size.width
+                alpha = 1f - absOffset
                 shader.setFloatUniform("resolution", size.width, size.height)
                 shader.setFloatUniform("amplitude", amplitudePx)
                 for (i in 0 until maxRipples) {

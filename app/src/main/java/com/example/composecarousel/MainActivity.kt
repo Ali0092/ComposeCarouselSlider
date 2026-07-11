@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 private val demoImages: List<CarouselImage> = listOf(
@@ -115,6 +116,7 @@ private fun CarouselGallery(modifier: Modifier = Modifier) {
                 pageHeight = null,
                 contentPadding = PaddingValues(horizontal = 32.dp, vertical = 24.dp),
                 pageSpacing = 8.dp,
+                showBackgroundImage = false,
                 itemCornerRadius = 22.dp,
                 effect = selectedEffect,
                 indicator = indicator,

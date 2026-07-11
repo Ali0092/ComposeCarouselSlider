@@ -23,7 +23,7 @@ There are no unit/instrumented tests in the repo yet, so `./gradlew test` is a n
 
 ## Architecture
 
-The slider is a thin host built around two strategy interfaces. Understanding this split is the "big picture" — most work in this repo is either implementing a new strategy or tweaking the host.
+The slider is a thin host built around one strategy interface (`CarouselEffect`). Understanding this split is the "big picture" — most work in this repo is either implementing a new effect or tweaking the host.
 
 ### Host: `CarouselSlider` / `CarouselSliderContent` (`CarouselSlider.kt`)
 
@@ -47,9 +47,9 @@ Effects live under `effects/` (graphicsLayer-based) and `effects/shader/` (AGSL 
 
 `CarouselEffects` (`effects/CarouselEffects.kt`) is the public registry — three grouped lists (`fancy`, `geometry3d`, `common`) plus a curated `all` list. **Ordering in `all` is intentional**: the most impressive effects lead so demo pickers surface them first. When adding a new effect, register it in the appropriate list; changing the head of `all` is a visible product decision, not a mechanical edit.
 
-### Indicators: `CarouselIndicator` (`indicators/CarouselIndicator.kt`)
+### Background layer
 
-`fun interface` — a stateless composable driven by `PagerState`. `ExpandingPillIndicator` is the default. Slider passes `indicator: CarouselIndicator? = ExpandingPillIndicator()`; pass `null` to hide.
+`CarouselSlider` has a built-in blurred background image (`showBackgroundImage: Boolean = true`, `backgroundBlurRadius: Dp = 40.dp`). Behind the pager it renders the settled page's image plus two crossfade layers for the neighbours being dragged toward, all inside a single `Modifier.blur(...)` pass. `Modifier.blur` is API 31+; the library's `minSdk = 33` covers it.
 
 ### Shared math: `internal/PagerMath.kt`
 

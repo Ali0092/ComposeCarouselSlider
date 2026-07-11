@@ -23,7 +23,7 @@ Then depend on the library:
 
 ```gradle
 dependencies {
-    implementation("com.github.Ali0092:ComposeCarouselSlider:2.0.0")
+    implementation("com.github.Ali0092:ComposeCarouselSlider:2.0.1")
 }
 ```
 

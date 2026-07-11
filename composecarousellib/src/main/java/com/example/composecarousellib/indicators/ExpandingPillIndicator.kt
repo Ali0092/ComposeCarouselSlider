@@ -21,15 +21,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
- * Expanding-pill indicator — active page is a rounded rectangle, inactive pages
- * are small circles. Common on modern onboarding flows.
+ * Expanding-pill indicator — the active page is a rounded pill, inactive pages are
+ * small dots. Standard on modern onboarding flows.
  */
 class ExpandingPillIndicator(
     private val activeColor: Color = Color.White,
-    private val inactiveColor: Color = Color.Gray.copy(alpha = 0.5f),
-    private val height: Dp = 8.dp,
+    private val inactiveColor: Color = Color.White.copy(alpha = 0.35f),
+    private val pillHeight: Dp = 8.dp,
     private val inactiveWidth: Dp = 8.dp,
-    private val activeWidth: Dp = 24.dp,
+    private val activeWidth: Dp = 26.dp,
     private val spacing: Dp = 6.dp,
 ) : CarouselIndicator {
 
@@ -44,16 +44,16 @@ class ExpandingPillIndicator(
                 val isActive = index == pagerState.currentPage
                 val w by animateDpAsState(
                     targetValue = if (isActive) activeWidth else inactiveWidth,
-                    animationSpec = tween(durationMillis = 240),
-                    label = "pill-width"
+                    animationSpec = tween(durationMillis = 260),
+                    label = "pill-width",
                 )
                 Box(
                     modifier = Modifier
                         .padding(horizontal = spacing / 2)
-                        .height(height)
+                        .height(pillHeight)
                         .width(w)
                         .clip(RoundedCornerShape(50))
-                        .background(if (isActive) activeColor else inactiveColor)
+                        .background(if (isActive) activeColor else inactiveColor),
                 )
             }
         }

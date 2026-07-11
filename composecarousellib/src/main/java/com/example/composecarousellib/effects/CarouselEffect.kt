@@ -7,38 +7,55 @@ import androidx.compose.ui.Modifier
 /**
  * A pluggable per-page transformation for [com.example.composecarousellib.CarouselSlider].
  *
- * An effect is a pure strategy: given the page index and the current [PagerState] it
- * returns a [Modifier] to apply to the page's item. Effects should be stateless and
- * cheap; anything expensive belongs in remembered state on the slider itself.
+ * Effects are strategies: given the page index and current [PagerState] they return
+ * a [Modifier] applied to the page item, and can optionally render:
+ * - a full-slider [Backdrop] behind all pages (a blurred image, a shader-driven
+ *   full-bleed layer, etc.);
+ * - per-page [BackgroundContent] / [ForegroundContent] behind/above the page content.
  *
- * Implementations that need custom drawing (shader, canvas overlays) can optionally
- * provide [backgroundContent] and [foregroundContent], which are laid on top of the
- * item's own drawing behind/in front of the page respectively.
+ * Effects that need `remember`-scoped resources (a [android.graphics.RuntimeShader],
+ * animatable state, coroutine scopes) should override [rememberItemModifier] rather
+ * than [buildItemModifier].
  */
 interface CarouselEffect {
-    /** Stable, user-facing name — used by the demo chip picker and for logs. */
+    /** Stable, user-facing name. */
     val name: String
 
     /**
-     * Stateless modifier applied to the pager item root. Suitable for graphicsLayer
-     * transforms that only need [page] and [pagerState].
-     * Default: no-op.
+     * If true, the slider draws [Backdrop] behind the pager and stops clipping the
+     * pager to a fixed card, so full-bleed effects (blurred backdrop, water surface)
+     * can render across the whole slider area.
      */
+    val prefersBackdrop: Boolean get() = false
+
+    /** Stateless per-page modifier. Default: no-op. */
     fun buildItemModifier(page: Int, pagerState: PagerState): Modifier = Modifier
 
-    /**
-     * Composable variant that can `remember` per-item resources such as [android.graphics.RuntimeShader].
-     * Default: delegates to [buildItemModifier].
-     */
+    /** Composable per-page modifier; can `remember` per-item state. */
     @Composable
     fun rememberItemModifier(page: Int, pagerState: PagerState): Modifier =
         buildItemModifier(page, pagerState)
 
-    /** Composable drawn behind the item content. Default: nothing. */
+    /**
+     * Full-slider layer drawn behind the pager. Only rendered when [prefersBackdrop]
+     * is true.
+     *
+     * @param renderImage a callback that renders the image at [index] with the given
+     * [Modifier]. Effects use this to draw the current (or blurred, or ripple-warped)
+     * image as their backdrop without knowing the concrete image type.
+     */
+    @Composable
+    fun Backdrop(
+        pagerState: PagerState,
+        pageCount: Int,
+        renderImage: @Composable (index: Int, modifier: Modifier) -> Unit,
+    ) {}
+
+    /** Composable drawn behind the item content. */
     @Composable
     fun BackgroundContent(page: Int, pagerState: PagerState) {}
 
-    /** Composable drawn over the item content. Default: nothing. */
+    /** Composable drawn above the item content. */
     @Composable
     fun ForegroundContent(page: Int, pagerState: PagerState) {}
 }

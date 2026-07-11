@@ -42,12 +42,7 @@ import com.example.composecarousellib.CarouselImage
 import com.example.composecarousellib.CarouselSlider
 import com.example.composecarousellib.effects.CarouselEffect
 import com.example.composecarousellib.effects.CarouselEffects
-import com.example.composecarousellib.indicators.BarIndicator
-import com.example.composecarousellib.indicators.CarouselIndicator
-import com.example.composecarousellib.indicators.DotIndicator
 import com.example.composecarousellib.indicators.ExpandingPillIndicator
-import com.example.composecarousellib.indicators.NumbersIndicator
-import com.example.composecarousellib.indicators.WormIndicator
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,23 +76,12 @@ private val demoImages: List<CarouselImage> = listOf(
     CarouselImage.Resource(R.drawable.image6),
 )
 
-private data class IndicatorOption(val name: String, val builder: () -> CarouselIndicator)
-
-private val indicatorOptions = listOf(
-    IndicatorOption("Dots") { DotIndicator() },
-    IndicatorOption("Worm") { WormIndicator() },
-    IndicatorOption("Pill") { ExpandingPillIndicator() },
-    IndicatorOption("Bar") { BarIndicator() },
-    IndicatorOption("Numbers") { NumbersIndicator() },
-)
-
 @Composable
 private fun CarouselGallery(modifier: Modifier = Modifier) {
     val effects = remember { CarouselEffects.all }
     var selectedEffect by remember { mutableStateOf<CarouselEffect>(effects.first()) }
-    var selectedIndicator by remember { mutableStateOf(indicatorOptions.first()) }
     val pagerState = rememberPagerState { demoImages.size }
-    val indicator = remember(selectedIndicator) { selectedIndicator.builder() }
+    val indicator = remember { ExpandingPillIndicator() }
 
     Column(
         modifier = modifier,
@@ -128,68 +112,51 @@ private fun CarouselGallery(modifier: Modifier = Modifier) {
         ) {
             CarouselSlider(
                 items = demoImages,
-                height = 480.dp,
-                contentPadding = PaddingValues(horizontal = 40.dp),
+                pageHeight = null,
+                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 24.dp),
                 pageSpacing = 8.dp,
-                itemCornerRadius = 20.dp,
+                itemCornerRadius = 22.dp,
                 effect = selectedEffect,
                 indicator = indicator,
                 pagerState = pagerState,
             )
         }
 
-        ChipRow(label = "Indicator") {
-            indicatorOptions.forEach { option ->
-                FilterChip(
-                    selected = option.name == selectedIndicator.name,
-                    onClick = { selectedIndicator = option },
-                    label = { Text(option.name) },
-                    colors = chipColors(),
-                    shape = RoundedCornerShape(50),
-                )
-                Spacer(Modifier.width(6.dp))
-            }
-        }
-        ChipRow(label = "Effect") {
-            effects.forEach { effect ->
-                FilterChip(
-                    selected = effect === selectedEffect,
-                    onClick = { selectedEffect = effect },
-                    label = { Text(effect.name) },
-                    colors = chipColors(),
-                    shape = RoundedCornerShape(50),
-                )
-                Spacer(Modifier.width(6.dp))
-            }
-        }
+        EffectChips(
+            effects = effects,
+            selected = selectedEffect,
+            onSelect = { selectedEffect = it },
+        )
         Spacer(Modifier.height(8.dp))
     }
 }
 
 @Composable
-private fun ChipRow(label: String, content: @Composable () -> Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp)) {
-        Text(
-            text = label,
-            color = Color(0xFF8A8A96),
-            fontSize = 12.sp,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-        )
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 12.dp),
-        ) {
-            content()
+private fun EffectChips(
+    effects: List<CarouselEffect>,
+    selected: CarouselEffect,
+    onSelect: (CarouselEffect) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+    ) {
+        effects.forEach { effect ->
+            FilterChip(
+                selected = effect === selected,
+                onClick = { onSelect(effect) },
+                label = { Text(effect.name) },
+                colors = FilterChipDefaults.filterChipColors(
+                    containerColor = Color(0xFF1B1B22),
+                    labelColor = Color(0xFFCECEDA),
+                    selectedContainerColor = Color(0xFF3D5AFE),
+                    selectedLabelColor = Color.White,
+                ),
+                shape = RoundedCornerShape(50),
+            )
+            Spacer(Modifier.width(6.dp))
         }
     }
 }
-
-@Composable
-private fun chipColors() = FilterChipDefaults.filterChipColors(
-    containerColor = Color(0xFF1B1B22),
-    labelColor = Color(0xFFCECEDA),
-    selectedContainerColor = Color(0xFF3D5AFE),
-    selectedLabelColor = Color.White,
-)

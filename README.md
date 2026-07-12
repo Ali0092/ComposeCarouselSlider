@@ -101,7 +101,9 @@ Roll your own by implementing `CarouselEffect` and overriding `buildItemModifier
 | `onItemClick` | `null` | Called with the tapped page index |
 
 ## Preview
-<img src="https://github.com/user-attachments/assets/b5ed01c1-e3ed-429a-ae96-578423ec697a" alt="Carousel preview" width="40%">
+
+https://github.com/user-attachments/assets/88ec3710-dba0-4182-ab29-37b7d046a3e6
+
 
 ## License
 
@@ -109,4 +111,29 @@ Apache 2.0 — see [LICENSE](LICENSE).
 
 ## Author
 
-**Muhammad Ali** — [GitHub](https://github.com/Ali0092/) · [LinkedIn](https://www.linkedin.com/in/muhammad-ali-a28422222/)
+<div align="center">
+
+### Muhammad Ali
+
+<a href="mailto:aliatwork364@gmail.com">
+  <img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" alt="Email" />
+</a>
+<a href="https://muhammadali0092.netlify.app" target="_blank">
+  <img src="https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=react&logoColor=61DAFB" alt="Portfolio" />
+</a>
+<a href="https://www.linkedin.com/in/muhammad-ali-a28422222" target="_blank">
+  <img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" />
+</a>
+<a href="https://github.com/Ali0092" target="_blank">
+  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+</a>
+
+</div>
+
+---
+
+<div align="center">
+
+❤️ **Created with love by [Muhammad Ali](https://github.com/Ali0092)**
+
+</div>
